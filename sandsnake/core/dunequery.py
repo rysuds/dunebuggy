@@ -1,8 +1,8 @@
 import pandas as pd
 
-from typing import List
-from models.query import (
-    Query, QueryMetadata, QueryResultData,
+from typing import List, Dict
+from sandsnake.models.query import (
+    Query, QueryMetadata, QueryParameter, QueryResultData,
     RawRow
 )
 
@@ -19,6 +19,14 @@ class DuneQuery:
     @property
     def query_id(self) -> int:
         return self.metadata.id
+
+    @property
+    def result_id(self):
+        return self.result_data.id
+
+    @property
+    def job_id(self):
+        return self.result_data.job_id
 
     @property
     def name(self) -> str:
@@ -41,6 +49,19 @@ class DuneQuery:
         return self.result_data.raw_data
 
     @property
+    def parameters(self) -> List[QueryParameter]:
+        return self.metadata.parameters
+
+    # @property
+    # def parameters(self) -> List[Dict]:
+    #     return [{
+    #         'name': param.key,
+    #         'type': param.type,
+    #         'options': param.enumOptions,
+    #         'value': param.value
+    #     } for param in self.raw_parameters]
+
+    @property
     def raw_sql(self) -> str:
         return self.metadata.query
 
@@ -50,6 +71,18 @@ class DuneQuery:
         if self._df is None:
             self._df = self._process_to_df(self.raw)
         return self._df
+
+    @property
+    def info(self) -> Dict:
+        return {
+            'name': self.name,
+            'author': self.author,
+            'length': self.length,
+            'query_id': self.query_id,
+            'result_id': self.result_id,
+            'job_id': self.job_id,
+            'columns': self.columns
+        }
 
     def _process_to_df(self, results: List) -> pd.DataFrame:
         processed = [r.data for r in results]
