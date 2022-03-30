@@ -1,7 +1,7 @@
 import pandas as pd
 
 from typing import List
-from sandsnake.models.query import (
+from models.query import (
     Query, QueryMetadata, QueryResultData,
     RawRow
 )

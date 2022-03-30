@@ -1,5 +1,5 @@
 from httpx import Client
-from sandsnake.models.constants import (
+from models.constants import (
     DEFAULT_HEADERS,
     LOGIN_URL,
     CSRF_URL,
@@ -11,8 +11,8 @@ from sandsnake.models.constants import (
     GET_RESULT_QUERY,
     FIND_RESULT_DATA_BY_RESULT_QUERY
 )
-from sandsnake.models.query import Query, QueryMetadata, QueryResultData
-from sandsnake.core.dunequery import DuneQuery
+from models.query import Query, QueryMetadata, QueryResultData
+from core.dunequery import DuneQuery
 
 
 class Dune:
