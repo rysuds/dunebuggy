@@ -1,5 +1,6 @@
 from uuid import UUID
 from httpx import Client
+from random import randint
 from typing import List, Optional
 from sandsnake.models.constants import (
     DEFAULT_HEADERS,
@@ -171,7 +172,7 @@ class Dune:
             {
                 "object": object,
                 "on_conflict": on_conflict,
-                "session_id": 10000
+                "session_id": randint(0, 9999)
             }
         )
         query_id = upsert_response["data"]["insert_queries_one"]["id"]
