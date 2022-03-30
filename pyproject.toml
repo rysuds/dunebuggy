@@ -4,6 +4,11 @@ version = "0.1.0"
 description = "A lightweight (unofficial) Python SDK for Dune.xyz"
 authors = ["rysuds <ryan.sudhakaran@gmail.com>"]
 license = "MIT"
+homepage = "https://github.com/rysuds/sandsnake"
+repository = "https://github.com/rysuds/sandsnake"
+include = [
+    "LICENSE",
+]
 
 [tool.poetry.dependencies]
 python = ">=3.9"
