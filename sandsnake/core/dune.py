@@ -40,6 +40,7 @@ class Dune:
             self.login(username, password)
 
     def _post_graph_ql(self, operation: str, query: str, variables: dict) -> dict:
+        # Change this to pydantic data type with enum? I.e. mapping between operation name and query?
         data = {
             "operationName": operation,
             "query": query,
@@ -139,6 +140,7 @@ class Dune:
     def query(self, sql: str, dataset_id: Dataset, parameters: Optional[List[QueryParameter]] = list(), is_temp=False) -> DuneQuery:
         # fail if not logged in
         # make this into its own empty query model class and populate it?
+        # https://github.com/kayak/pypika
         if self.user_id is None:
             raise DuneError('Must login before querying!')
         object = {
@@ -165,7 +167,6 @@ class Dune:
                 "parameters"
             ],
         }
-        # self.session_id should be RAND int
         upsert_response = self._post_graph_ql(
             "UpsertQuery",
             UPSERT_QUERY,
