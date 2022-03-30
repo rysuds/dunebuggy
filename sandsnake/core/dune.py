@@ -38,10 +38,6 @@ class Dune:
         if username is not None and password is not None:
             self.login(username, password)
 
-    @property
-    def session_id(self) -> int:
-        pass
-
     def _post_graph_ql(self, operation: str, query: str, variables: dict) -> dict:
         data = {
             "operationName": operation,
