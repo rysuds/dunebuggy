@@ -128,16 +128,6 @@ class Dune:
         )
         return self._process_result_data(raw_result)
 
-        # results=raw_result['data']['query_results']
-        # errors=[blob.get('error').get('error')
-        #           for blob in results if blob.get('error')]
-        # if any(errors):
-        #     raise DuneError('.'.join(errors))
-
-        # query_result_data = results[0]
-        # query_result_data['raw_data'] = raw_result['data']['get_result_by_result_id']
-        # return QueryResultData(**query_result_data)
-
     def _process_result_data(self, raw_result: dict) -> QueryResultData:
         results = raw_result['data']['query_results']
         errors = [blob.get('error').get('error')
@@ -196,7 +186,6 @@ class Dune:
             EXECUTE_QUERY,
             {"parameters": parameters, "query_id": query_id}
         )
-        print(executed)
         return self.fetch_query(query_id, parameters)
 
         # Should return a DuneQuery Object, that can be used to grab the table, charts etc
