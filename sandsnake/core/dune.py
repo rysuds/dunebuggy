@@ -141,6 +141,8 @@ class Dune:
         # fail if not logged in
         # make this into its own empty query model class and populate it?
         # https://github.com/kayak/pypika
+        # can cast from str -> sql
+        # https://pypika.readthedocs.io/en/latest/_modules/pypika/queries.html#AliasedQuery.get_sql
         if self.user_id is None:
             raise DuneError('Must login before querying!')
         object = {
