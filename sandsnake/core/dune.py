@@ -178,7 +178,7 @@ class Dune:
         query_id = upsert_response["data"]["insert_queries_one"]["id"]
 
         # TODO maybe retry on this? might not need to
-        executed = self._post_graph_ql(
+        self._post_graph_ql(
             "ExecuteQuery",
             EXECUTE_QUERY,
             {"parameters": parameters, "query_id": query_id}
