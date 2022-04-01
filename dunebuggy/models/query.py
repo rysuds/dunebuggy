@@ -4,7 +4,7 @@ from datetime import datetime
 from typing import Optional, List, Dict
 from pydantic import BaseModel, AnyHttpUrl
 
-from sandsnake.models.constants import DatasetId, ParameterEnum, DatasetId
+from dunebuggy.models.constants import DatasetId, ParameterEnum, DatasetId
 
 
 class User(BaseModel):

@@ -4,8 +4,8 @@ version = "0.1.0"
 description = "A lightweight (unofficial) Python SDK for Dune.xyz"
 authors = ["rysuds <ryan.sudhakaran@gmail.com>"]
 license = "MIT"
-homepage = "https://github.com/rysuds/sandsnake"
-repository = "https://github.com/rysuds/sandsnake"
+homepage = "https://github.com/rysuds/dunebuggy"
+repository = "https://github.com/rysuds/dunebuggy"
 include = [
     "LICENSE",
 ]
