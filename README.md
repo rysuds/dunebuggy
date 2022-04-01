@@ -2,6 +2,11 @@
 
 A lightweight (unofficial) Python SDK for [Dune.xyz](https://dune.xyz/home)
 
+[Installation](#installation) •
+[Getting started](#getting-started) •
+[Roadmap](#roadmap) •
+[Notes](#notes)
+
 ## Installation
 
 ```sh
@@ -365,3 +370,18 @@ To save a query to a CSV, we can take advantage of the `to_csv` method on our `d
 ```python
 created_query.df.to_csv('my_test_data.csv')
 ```
+
+## Roadmap
+
+- [ ] Cleanup punding TODO comments
+- [ ] Add tests (lol)
+- [ ] Add support for query updating
+- [ ] Add support for embedding Dune graphs/ plotting w/ Dune style colors
+- [ ] Investigate whether dashboard support makes sense?
+- [ ] Investigate whether there is a max row limit for data returned, if so, query in batches?
+- [ ] Better formatting for certain returned columns (links etc..)
+- [ ] Add Documentation (Sphinx or something else)
+
+## Notes
+
+_This project was inspired by the [itzemstar's duneanalytics repo](https://github.com/itzmestar/duneanalytics)_
