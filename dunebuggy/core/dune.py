@@ -2,7 +2,7 @@ from uuid import UUID
 from httpx import Client
 from random import randint
 from typing import List, Optional, Dict
-from sandsnake.models.constants import (
+from dunebuggy.models.constants import (
     DEFAULT_HEADERS,
     LOGIN_URL,
     CSRF_URL,
@@ -11,15 +11,15 @@ from sandsnake.models.constants import (
     SESSION_URL,
     GRAPH_QL_URL
 )
-from sandsnake.models.query import (
+from dunebuggy.models.query import (
     Query, QueryMetadata,
     QueryResultData, QueryParameter,
     CreateQueryOnConflict, CreateQueryObject
 )
-from sandsnake.models.constants import DatasetId
-from sandsnake.models.gqlqueries import QueryName
-from sandsnake.core.dunequery import DuneQuery
-from sandsnake.core.exceptions import DuneError
+from dunebuggy.models.constants import DatasetId
+from dunebuggy.models.gqlqueries import QueryName
+from dunebuggy.core.dunequery import DuneQuery
+from dunebuggy.core.exceptions import DuneError
 
 
 class GraphQLQuerierMixin:

@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "sandsnake_dune"
+name = "dunebuggy"
 version = "0.1.0"
 description = "A lightweight (unofficial) Python SDK for Dune.xyz"
 authors = ["rysuds <ryan.sudhakaran@gmail.com>"]
@@ -25,5 +25,5 @@ requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 packages = [
-    { include = "sandsnake" }
+    { include = "dunebuggy" }
 ]

@@ -1,7 +1,7 @@
 import pandas as pd
 
 from typing import List, Dict
-from sandsnake.models.query import (
+from dunebuggy.models.query import (
     Query, QueryMetadata, QueryParameter, QueryResultData,
     RawRow
 )
