@@ -1,5 +1,7 @@
 # Sandsnake
+
 ---
+
 A lightweight (unofficial) Python SDK for Dune.xyz
 
 [Installation](#installation) •
@@ -17,34 +19,17 @@ pip install sandsnake
 
 ### Retrieving a public query
 
-To retrieve a query, all we'll need is the ```query_id``` for the public query we're interested in. In the below example we can take a look at the popular ["Custom NFT Floor Tracker" query by @smaroo](https://dune.xyz/queries/83579) (The ```query_id``` below can be found in the URL).
-
+To retrieve a query, all we'll need is the `query_id` for the public query we're interested in. In the below example we can take a look at the popular ["Custom NFT Floor Tracker" query by @smaroo](https://dune.xyz/queries/83579) (The `query_id` below can be found in the URL).
 
 ```python
 from sandsnake import Dune
 
 dune = Dune()
 query = dune.fetch_query(83579)
-query.df.head()
+print(query.df.head())
 ```
 
-
-
-
 <div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
@@ -83,17 +68,11 @@ query.df.head()
 </table>
 </div>
 
-
-
-We can also take a look at some basic information about the returned query with ```query.info```
-
+We can also take a look at some basic information about the returned query with `query.info`
 
 ```python
-query.info
+print(query.info)
 ```
-
-
-
 
     {'name': 'Custom NFT Floor Tracker',
      'author': '@smaroo',
@@ -103,28 +82,19 @@ query.info
      'job_id': UUID('ec680fa9-217f-44c5-b223-56730cd07473'),
      'columns': ['Time Interval', 'Floor (Approx)']}
 
-
-
-Some queries in Dune are "parameterized", meaning that the author exposes certain variables for the user to enter custom values. The example query (83579) happens to be parameterized, we can verify this by inspecting ```query.parameters```
-
+Some queries in Dune are "parameterized", meaning that the author exposes certain variables for the user to enter custom values. The example query (83579) happens to be parameterized, we can verify this by inspecting `query.parameters`
 
 ```python
-query.parameters
+print(query.parameters)
 ```
-
-
-
 
     [QueryParameter(key='Enter NFT Contract Address', type='text', value='xc3f733ca98e0dad0386979eb96fb1722a1a05e69', enumOptions=None),
      QueryParameter(key='Floor Time Interval', type='enum', value='Day', enumOptions=['Day', 'Hour']),
      QueryParameter(key='Start Date', type='datetime', value='2021-06-01 00:00:00', enumOptions=None)]
 
-
-
-If you'd like to run this query with your own custom parameters, all we'll need to do is take the parameters from from the initial query, change the values to what we want, and re-fetch the query. You can also create a fresh set of parameters by importing ```QueryParameter``` from ```sandsnake.models.query``` and adding the values to the new object.
+If you'd like to run this query with your own custom parameters, all we'll need to do is take the parameters from from the initial query, change the values to what we want, and re-fetch the query. You can also create a fresh set of parameters by importing `QueryParameter` from `sandsnake.models.query` and adding the values to the new object.
 
 Below we are replacing the old NFT contract address param with a new one ([the contract address for BAYC](https://etherscan.io/address/0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d))
-
 
 ```python
 old_params = query.parameters
@@ -134,11 +104,8 @@ old_params[0].value = 'xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D'
 new_params = old_params
 custom_query = dune.fetch_query(83579, parameters=new_params)
 
-custom_query.info
+print(custom_query.info)
 ```
-
-
-
 
     {'name': 'Custom NFT Floor Tracker',
      'author': '@smaroo',
@@ -148,46 +115,21 @@ custom_query.info
      'job_id': UUID('9051ebe7-862f-46d0-9999-b4645659ca56'),
      'columns': ['Time Interval', 'Floor (Approx)']}
 
-
-
-Note that the ```result_id``` and ```job_id``` here are different, this is because we ran the query with our changed params
-
+Note that the `result_id` and `job_id` here are different, this is because we ran the query with our changed params
 
 ```python
-custom_query.parameters
+print(custom_query.parameters)
 ```
-
-
-
 
     [QueryParameter(key='Enter NFT Contract Address', type='text', value='xc3f733ca98e0dad0386979eb96fb1722a1a05e69', enumOptions=None),
      QueryParameter(key='Floor Time Interval', type='enum', value='Day', enumOptions=['Day', 'Hour']),
      QueryParameter(key='Start Date', type='datetime', value='2021-06-01 00:00:00', enumOptions=None)]
 
-
-
-
 ```python
-custom_query.df.head()
+print(custom_query.df.head())
 ```
 
-
-
-
 <div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
@@ -226,39 +168,27 @@ custom_query.df.head()
 </table>
 </div>
 
-
-
 ### Creating a new query
 
-Sandsnake also allows you to create a new using an existing Dune.xyz account.You'll just need to pass in your username/password into the ```Dune``` object in order to login. After logging in, you should be able to retrieve your ```user_id```
-
+Sandsnake also allows you to create a new using an existing Dune.xyz account.You'll just need to pass in your username/password into the `Dune` object in order to login. After logging in, you should be able to retrieve your `user_id`
 
 ```python
-import os 
+import os
 
 username = os.environ.get('DUNE_USERNAME')
 password = os.environ.get('DUNE_PASSWORD')
 
 dune = Dune(username=username, password=password)
-dune.user_id
+# print(dune.user_id)
 ```
 
-
-
-
-    96571
-
-
-
 We'll now need to construct a Dune SQL query. We can do this in two ways. The first being just creating a raw string SQL query like below
-
 
 ```python
 query_string = "select * from ethereum.transactions\nLIMIT 100\n"
 ```
 
 Or, if we wanna get fancy, we could use the fantastic PyPika library to construct one in an ORM style
-
 
 ```python
 from pypika import Database, Query
@@ -269,56 +199,32 @@ query_string = q.get_sql(quote_char=None)
 query_string
 ```
 
-
-
-
     'SELECT * FROM ethereum.transactions LIMIT 100'
 
+Dune requires us to specify an integer code (`Id`) for each of their support blockchain datasets. The currently supported datasets are the following:
 
+| Blockchain Dataset | Id  |
+| ------------------ | --- |
+| ETHEREUM           | 4   |
+| XDAI               | 6   |
+| POLYGON            | 7   |
+| OPTIMISM_1         | 8   |
+| OPTIMISM_2         | 10  |
+| BINANCE            | 9   |
+| SOLANA             | 1   |
 
-Dune requires us to specify an integer code (```Id```) for each of their support blockchain datasets. The currently supported datasets are the following:
-
-| Blockchain Dataset | Id |
-|--------------------|----|
-| ETHEREUM           | 4  |
-| XDAI               | 6  |
-| POLYGON            | 7  |
-| OPTIMISM_1         | 8  |
-| OPTIMISM_2         | 10 |
-| BINANCE            | 9  |
-| SOLANA             | 1  |
-
-We can access these integer codes via the ```DatasetId``` enum. To create a query now, all we need to do is pass in a ```name```, ```query_string``` and ```dataset_id```
-
+We can access these integer codes via the `DatasetId` enum. To create a query now, all we need to do is pass in a `name`, `query_string` and `dataset_id`
 
 ```python
 from sandsnake.models.constants import DatasetId
-created_query = dune.create_query("My Query's Name", query_string, DatasetId.ETHEREUM)                          
-                       
+created_query = dune.create_query("My Query's Name", query_string, DatasetId.ETHEREUM)
 ```
-
 
 ```python
-created_query.df.head()
+print(created_query.df.head())
 ```
 
-
-
-
 <div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
@@ -459,18 +365,10 @@ created_query.df.head()
 </table>
 </div>
 
-
-
 ### Saving to CSV
 
-To save a query to a CSV, we can take advantage of the ```to_csv``` method on our ```df```
-
+To save a query to a CSV, we can take advantage of the `to_csv` method on our `df`
 
 ```python
 created_query.df.to_csv('my_test_data.csv')
-```
-
-
-```python
-
 ```
