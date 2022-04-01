@@ -1,5 +1,8 @@
 # Dunebuggy
 
+![Alt text](./dune-buggy.svg)
+<img src="./dune-buggy.svg">
+
 A lightweight (unofficial) Python SDK for [Dune.xyz](https://dune.xyz/home)
 
 [Installation](#installation) •
