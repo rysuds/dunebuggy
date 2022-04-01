@@ -2,11 +2,6 @@
 
 A lightweight (unofficial) Python SDK for [Dune.xyz](https://dune.xyz/home)
 
-[Installation](#installation) •
-[Getting started](#getting-started) •
-[Configuration](#configuration) •
-[Integrations](#third-party-integrations)
-
 ## Installation
 
 ```sh
