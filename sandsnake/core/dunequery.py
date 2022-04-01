@@ -52,15 +52,6 @@ class DuneQuery:
     def parameters(self) -> List[QueryParameter]:
         return self.metadata.parameters
 
-    # @property
-    # def parameters(self) -> List[Dict]:
-    #     return [{
-    #         'name': param.key,
-    #         'type': param.type,
-    #         'options': param.enumOptions,
-    #         'value': param.value
-    #     } for param in self.raw_parameters]
-
     @property
     def raw_sql(self) -> str:
         return self.metadata.query
