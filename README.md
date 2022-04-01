@@ -1,11 +1,11 @@
-# Sandsnake
+# Dunebuggy
 
 A lightweight (unofficial) Python SDK for [Dune.xyz](https://dune.xyz/home)
 
 ## Installation
 
 ```sh
-pip install sandsnake_dune
+pip install dunebuggy
 ```
 
 ## Getting started
@@ -15,7 +15,7 @@ pip install sandsnake_dune
 To retrieve a query, all we'll need is the `query_id` for the public query we're interested in. In the below example we can take a look at the popular ["Custom NFT Floor Tracker" query by @smaroo](https://dune.xyz/queries/83579) (The `query_id` below can be found in the URL).
 
 ```python
-from sandsnake import Dune
+from dunebuggy import Dune
 
 dune = Dune()
 query = dune.fetch_query(83579)
@@ -85,7 +85,7 @@ print(query.parameters)
      QueryParameter(key='Floor Time Interval', type='enum', value='Day', enumOptions=['Day', 'Hour']),
      QueryParameter(key='Start Date', type='datetime', value='2021-06-01 00:00:00', enumOptions=None)]
 
-If you'd like to run this query with your own custom parameters, all we'll need to do is take the parameters from from the initial query, change the values to what we want, and re-fetch the query. You can also create a fresh set of parameters by importing `QueryParameter` from `sandsnake.models.query` and adding the values to the new object.
+If you'd like to run this query with your own custom parameters, all we'll need to do is take the parameters from from the initial query, change the values to what we want, and re-fetch the query. You can also create a fresh set of parameters by importing `QueryParameter` from `dunebuggy.models.query` and adding the values to the new object.
 
 Below we are replacing the old NFT contract address param with a new one ([the contract address for BAYC](https://etherscan.io/address/0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d))
 
@@ -163,7 +163,7 @@ print(custom_query.df.head())
 
 ### Creating a new query
 
-Sandsnake also allows you to create a new using an existing Dune.xyz account.You'll just need to pass in your username/password into the `Dune` object in order to login. After logging in, you should be able to retrieve your `user_id`
+Dunebuggy also allows you to create a new using an existing Dune.xyz account.You'll just need to pass in your username/password into the `Dune` object in order to login. After logging in, you should be able to retrieve your `user_id`
 
 ```python
 import os
@@ -209,7 +209,7 @@ Dune requires us to specify an integer code (`Id`) for each of their support blo
 We can access these integer codes via the `DatasetId` enum. To create a query now, all we need to do is pass in a `name`, `query_string` and `dataset_id`
 
 ```python
-from sandsnake.models.constants import DatasetId
+from dunebuggy.models.constants import DatasetId
 created_query = dune.create_query("My Query's Name", query_string, DatasetId.ETHEREUM)
 ```
 
