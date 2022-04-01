@@ -1,7 +1,5 @@
 # Sandsnake
 
----
-
 A lightweight (unofficial) Python SDK for [Dune.xyz](https://dune.xyz/home)
 
 [Installation](#installation) •
