@@ -4,7 +4,7 @@ from datetime import datetime
 from typing import Optional, List, Dict
 from pydantic import BaseModel, AnyHttpUrl
 
-from sandsnake.models.constants import ParameterEnum, Dataset
+from sandsnake.models.constants import DatasetId, ParameterEnum, DatasetId
 
 
 class User(BaseModel):
@@ -59,7 +59,7 @@ class Query(BaseModel):
 
 
 class CreateQueryObject(BaseModel):
-    dataset_id: Dataset
+    dataset_id: DatasetId
     is_temp: bool
     name: str
     query: str  # SQL string

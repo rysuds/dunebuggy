@@ -16,7 +16,7 @@ from sandsnake.models.query import (
     QueryResultData, QueryParameter,
     CreateQueryOnConflict, CreateQueryObject
 )
-from sandsnake.models.constants import Dataset
+from sandsnake.models.constants import DatasetId
 from sandsnake.models.gqlqueries import QueryName
 from sandsnake.core.dunequery import DuneQuery
 from sandsnake.core.exceptions import DuneError
@@ -146,7 +146,7 @@ class Dune(GraphQLQuerierMixin):
         query_result_data['raw_data'] = raw_result['data']['get_result_by_result_id']
         return QueryResultData(**query_result_data)
 
-    def create_query(self, query_name: str, sql: str, dataset_id: Dataset, parameters: Optional[List[QueryParameter]] = list(), is_temp=False) -> DuneQuery:
+    def create_query(self, query_name: str, sql: str, dataset_id: DatasetId, parameters: Optional[List[QueryParameter]] = list(), is_temp=False) -> DuneQuery:
         # fail if not logged in
         # make this into its own empty query model class and populate it?
         # https://github.com/kayak/pypika

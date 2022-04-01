@@ -23,7 +23,7 @@ DEFAULT_HEADERS = {
 }
 
 
-class Dataset(int, Enum):
+class DatasetId(int, Enum):
     ETHEREUM = 4
     XDAI = 6
     POLYGON = 7
