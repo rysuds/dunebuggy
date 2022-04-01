@@ -5,7 +5,7 @@ A lightweight (unofficial) Python SDK for [Dune.xyz](https://dune.xyz/home)
 ## Installation
 
 ```sh
-pip install sandsnake
+pip install sandsnake_dune
 ```
 
 ## Getting started

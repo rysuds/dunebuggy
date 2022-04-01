@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "sandsnake"
+name = "sandsnake_dune"
 version = "0.1.0"
 description = "A lightweight (unofficial) Python SDK for Dune.xyz"
 authors = ["rysuds <ryan.sudhakaran@gmail.com>"]
