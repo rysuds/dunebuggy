@@ -10,7 +10,7 @@
 </h1>
 
 <div align="center">
-A lightweight (unofficial) Python SDK for [Dune.xyz](https://dune.xyz/home)
+A lightweight (unofficial) Python SDK for <a href=https://dune.xyz/home> Dune.xyz</a>
 <br>
 
 [Installation](#installation) •
@@ -398,3 +398,5 @@ created_query.df.to_csv('my_test_data.csv')
 ## Notes
 
 _This project was inspired by the [itzemstar's duneanalytics repo](https://github.com/itzmestar/duneanalytics)_
+
+*README image is from the [IAN Symbols dataset](https://ian.umces.edu/media-library/symbols/)* 
