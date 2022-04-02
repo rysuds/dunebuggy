@@ -37,6 +37,11 @@ from dunebuggy import Dune
 
 dune = Dune()
 query = dune.fetch_query(83579)
+```
+
+`query` here is a `DuneQuery` object, we can get the `pandas` DataFrame for the query output bf calling `df` on the object
+
+```python
 print(query.df.head())
 ```
 
@@ -103,18 +108,32 @@ print(query.parameters)
      QueryParameter(key='Floor Time Interval', type='enum', value='Day', enumOptions=['Day', 'Hour']),
      QueryParameter(key='Start Date', type='datetime', value='2021-06-01 00:00:00', enumOptions=None)]
 
-If you'd like to run this query with your own custom parameters, all we'll need to do is take the parameters from from the initial query, change the values to what we want, and re-fetch the query. You can also create a fresh set of parameters by importing `QueryParameter` from `dunebuggy.models.query` and adding the values to the new object.
+If you'd like to run this query with your own custom parameters, all we'll need to do is take the parameters from from the initial query, change the values to what we want, and re-fetch the query.
 
 Below we are replacing the old NFT contract address param with a new one ([the contract address for BAYC](https://etherscan.io/address/0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d))
 
 ```python
-old_params = query.parameters
+params = query.parameters
 
 # Replacing with contract address for BAYC
-old_params[0].value = 'xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D'
-new_params = old_params
-custom_query = dune.fetch_query(83579, parameters=new_params)
+params[0].value = 'xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D'
+custom_query = dune.fetch_query(83579, parameters=params)
+```
 
+Note: You can also create a fresh set of parameters by importing `QueryParameter` from `dunebuggy.models.query` and adding the values to the new object.
+
+```python
+from dunebuggy.models.query import QueryParameter
+
+param_to_change = QueryParameter(
+  key='Enter NFT Contract Address',
+  value='xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D',
+)
+params[0] = param_to_change
+custom_query = dune.fetch_query(83579, parameters=params)
+```
+
+```python
 print(custom_query.info)
 ```
 
@@ -181,7 +200,9 @@ print(custom_query.df.head())
 
 ### Creating a new query
 
-Dunebuggy also allows you to create a new using an existing Dune.xyz account.You'll just need to pass in your username/password into the `Dune` object in order to login. After logging in, you should be able to retrieve your `user_id`
+`dunebuggy` also allows you to create a new using an existing Dune.xyz account.To login just need to pass in your username/password into the `Dune` object.
+
+You can verify your login by inspecting your Dune `user_id`
 
 ```python
 import os
@@ -193,13 +214,15 @@ dune = Dune(username=username, password=password)
 # print(dune.user_id)
 ```
 
-We'll now need to construct a Dune SQL query. We can do this in two ways. The first being just creating a raw string SQL query like below
+To create a query now, all we need to do is pass in a `name`, `query_string` and `dataset_id`
+
+We can construct the SQL query by using a raw sql string
 
 ```python
 query_string = "select * from ethereum.transactions\nLIMIT 100\n"
 ```
 
-Or, if we wanna get fancy, we could use the fantastic PyPika library to construct one in an ORM style
+Or we could use a fancy ORM-style library like [pypika](https://github.com/kayak/pypika)
 
 ```python
 from pypika import Database, Query
@@ -207,12 +230,12 @@ from pypika import Database, Query
 ethereum = Database('ethereum')
 q = Query.from_(ethereum.transactions).select('*').limit(100)
 query_string = q.get_sql(quote_char=None)
-query_string
+print(query_string)
 ```
 
     'SELECT * FROM ethereum.transactions LIMIT 100'
 
-Dune requires us to specify an integer code (`Id`) for each of their support blockchain datasets. The currently supported datasets are the following:
+Dune requires us to specify a `dataset_id` for each of their supported blockchain datasets upon query creation. The currently supported datasets are the following:
 
 | Blockchain Dataset | Id  |
 | ------------------ | --- |
@@ -224,12 +247,14 @@ Dune requires us to specify an integer code (`Id`) for each of their support blo
 | BINANCE            | 9   |
 | SOLANA             | 1   |
 
-We can access these integer codes via the `DatasetId` enum. To create a query now, all we need to do is pass in a `name`, `query_string` and `dataset_id`
+We can access these integer codes via the `DatasetId` enum
 
 ```python
 from dunebuggy.models.constants import DatasetId
 created_query = dune.create_query("My Query's Name", query_string, DatasetId.ETHEREUM)
 ```
+
+Our created query can be accessed like any other, you can also log into your Dune account as see it there as well!
 
 ```python
 print(created_query.df.head())
@@ -387,9 +412,9 @@ created_query.df.to_csv('my_test_data.csv')
 ## Roadmap
 
 - [ ] Cleanup punding TODO comments
+- [ ] Add support for embedding Dune graphs/ plotting w/ Dune style colors
 - [ ] Add tests (lol)
 - [ ] Add support for query updating
-- [ ] Add support for embedding Dune graphs/ plotting w/ Dune style colors
 - [ ] Investigate whether dashboard support makes sense?
 - [ ] Investigate whether there is a max row limit for data returned, if so, query in batches?
 - [ ] Better formatting for certain returned columns (links etc..)

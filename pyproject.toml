@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "dunebuggy"
-version = "1.0.1"
+version = "1.0.2"
 description = "A lightweight (unofficial) Python SDK for Dune.xyz"
 authors = ["rysuds <ryan.sudhakaran@gmail.com>"]
 license = "MIT"
@@ -12,9 +12,9 @@ include = [
 
 [tool.poetry.dependencies]
 python = ">=3.9"
-numpy = "1.21"
+numpy = "1.21.*"
 httpx = ">=0.18.2"
-sqlparse = "^0.4.2"
+sqlparse = ">=0.4.2"
 pandas = ">=1.2.4"
 pydantic = ">=1.8.2"
 
