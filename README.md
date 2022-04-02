@@ -1,14 +1,24 @@
-# Dunebuggy
+<!-- # Dunebuggy
 
-![Alt text](./dune-buggy.svg)
-<img src="./dune-buggy.svg">
+![Alt text](./dune-buggy.svg) -->
 
+<h1 align="center">
+  <br>
+  <img src="./dune-buggy.svg" alt="Dunebuggy" width="300" height="225">
+  <br>
+  <div style="sans-serif"><b>Dunebuggy</b></p>
+</h1>
+
+<div align="center">
 A lightweight (unofficial) Python SDK for [Dune.xyz](https://dune.xyz/home)
+<br>
 
 [Installation](#installation) •
 [Getting started](#getting-started) •
 [Roadmap](#roadmap) •
 [Notes](#notes)
+
+</div>
 
 ## Installation
 
