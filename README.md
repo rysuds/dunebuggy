@@ -4,7 +4,7 @@
 
 <h1 align="center">
   <br>
-  <img src="./dune-buggy.svg" alt="Dunebuggy" width="300" height="225">
+  <img src="./assets/dune-buggy.svg" alt="Dunebuggy" width="300" height="225">
   <br>
   <div style="sans-serif"><b>Dunebuggy</b></p>
 </h1>
@@ -399,4 +399,4 @@ created_query.df.to_csv('my_test_data.csv')
 
 _This project was inspired by the [itzemstar's duneanalytics repo](https://github.com/itzmestar/duneanalytics)_
 
-*README image is from the [IAN Symbols dataset](https://ian.umces.edu/media-library/symbols/)* 
+_README image is from the [IAN Symbols dataset](https://ian.umces.edu/media-library/symbols/)_
