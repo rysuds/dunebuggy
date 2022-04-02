@@ -1,119 +1,28 @@
-from uuid import UUID
 from httpx import Client
-from random import randint
-from typing import List, Optional, Dict
+from typing import List, Optional
 from dunebuggy.models.constants import (
     DEFAULT_HEADERS,
     LOGIN_URL,
     CSRF_URL,
     BASE_URL,
     API_AUTH_URL,
-    SESSION_URL,
-    GRAPH_QL_URL
+    SESSION_URL
 )
 from dunebuggy.models.query import (
-    Query, QueryMetadata,
-    QueryResultData, QueryParameter,
+    Query, QueryParameter,
     CreateQueryOnConflict, CreateQueryObject
 )
+from dunebuggy.core.gqlquerier import GraphQLQuerier
 from dunebuggy.models.constants import DatasetId
 from dunebuggy.models.gqlqueries import QueryName
 from dunebuggy.core.dunequery import DuneQuery
 from dunebuggy.core.exceptions import DuneError
 
 
-class GraphQLQuerierMixin:
-
-    def _post_graph_ql(self, query_name: QueryName, variables: dict) -> dict:
-        # Change this to pydantic data type with enum? I.e. mapping between operation name and query?
-        data = {
-            "operationName": query_name.value,
-            "query": query_name.get_query_string(),
-            "variables": variables
-        }
-        response = self.client.post(GRAPH_QL_URL, json=data)
-        return response.json()
-
-    def _get_user_id(self, sub: UUID) -> int:
-        user_info = self._post_graph_ql(
-            QueryName.FIND_SESSION_USER,
-            {"sub": sub}
-        )
-        return user_info["data"]["users"][0]["id"]
-
-    def _get_query_metadata(self, query_id: int) -> QueryMetadata:
-        variables = {"id": query_id}
-        raw_metadata = self._post_graph_ql(
-            QueryName.FIND_QUERY,
-            variables
-        )
-        metadata = raw_metadata['data']['queries'][0]
-        return QueryMetadata(**metadata)
-
-    # TODO clean up this bulky handling of parmeters!!
-    def _get_result_id(self, query_id: int, parameters: Optional[List[QueryParameter]] = None) -> str:
-        variables = {"query_id": query_id}
-        if len(parameters):
-            parameters = [
-                param.dict() for param in parameters if type(param) == QueryParameter]
-            variables['parameters'] = parameters
-        result_id_data = self._post_graph_ql(
-            QueryName.GET_RESULT,
-            variables
-        )
-        result = result_id_data.get('data').get('get_result')
-        return result.get('result_id'), result.get('job_id')
-
-    def _get_result_data_by_job(self, job_id: UUID) -> QueryResultData:
-        raw_result = self._post_graph_ql(
-            QueryName.FIND_RESULT_DATA_BY_JOB,
-            {"job_id": job_id}
-        )
-        return self._process_result_data(raw_result)
-
-    def _get_result_data_by_result(self, result_id: int) -> QueryResultData:
-        raw_result = self._post_graph_ql(
-            QueryName.FIND_RESULT_DATA_BY_RESULT,
-            {"result_id": result_id}
-        )
-        return self._process_result_data(raw_result)
-
-    def _upsert_query(self, object: CreateQueryObject, on_conflict: CreateQueryOnConflict) -> Dict:
-        upsert_response = self._post_graph_ql(
-            QueryName.UPSERT_QUERY,
-            {
-                "object": object.dict(),
-                "on_conflict": on_conflict.dict(),
-                "session_id": randint(0, 9999)
-            }
-        )
-        return upsert_response
-
-    def _execute_query(self, parameters: list, query_id: int) -> None:
-        # TODO maybe retry/raise on this? might not need to
-        # TODO clean up gross parameters handling
-        parameters = [
-            param.dict() for param in parameters if type(param) == QueryParameter]
-        self._post_graph_ql(
-            QueryName.EXECUTE_QUERY,
-            {"query_id": query_id, "parameters": parameters}
-        )
-
-    def _process_result_data(self, raw_result: dict) -> QueryResultData:
-        results = raw_result['data']['query_results']
-        errors = [blob.get('error').get('error')
-                  for blob in results if blob.get('error')]
-        if any(errors):
-            raise DuneError('.'.join(errors))
-
-        query_result_data = results[0]
-        query_result_data['raw_data'] = raw_result['data']['get_result_by_result_id']
-        return QueryResultData(**query_result_data)
-
-
-class Dune(GraphQLQuerierMixin):
+class Dune:
     def __init__(self, username=None, password=None):
         self.client = Client()
+        self.gqlquerier = GraphQLQuerier(self.client)
         self.client.headers.update(DEFAULT_HEADERS)
         self.access_token = None
         self.token = None
@@ -149,7 +58,7 @@ class Dune(GraphQLQuerierMixin):
         self.client.headers.update(
             {'authorization': f'Bearer {self.token}'}
         )
-        self.user_id = self._get_user_id(self.sub)
+        self.user_id = self.gqlquerier.get_user_id(self.sub)
 
     def create_query(self, query_name: str, sql: str, dataset_id: DatasetId, parameters: Optional[List[QueryParameter]] = list(), is_temp=False) -> DuneQuery:
         # fail if not logged in
@@ -159,6 +68,7 @@ class Dune(GraphQLQuerierMixin):
         # https://pypika.readthedocs.io/en/latest/_modules/pypika/queries.html#AliasedQuery.get_sql
         if self.user_id is None:
             raise DuneError('Must login before creating a query!')
+
         object = CreateQueryObject(
             dataset_id=dataset_id,
             is_temp=is_temp,
@@ -168,25 +78,25 @@ class Dune(GraphQLQuerierMixin):
         )
         on_conflict = CreateQueryOnConflict()
 
-        upsert_response = self._upsert_query(object, on_conflict)
+        upsert_response = self.gqlquerier.upsert_query(object, on_conflict)
         query_id = upsert_response["data"]["insert_queries_one"]["id"]
-        self._execute_query(parameters, query_id)
+        self.gqlquerier.execute_query(parameters, query_id)
 
         return self.fetch_query(query_id, parameters)
 
         # Should return a DuneQuery Object, that can be used to grab the table, charts etc
         # Streaming Responses??
     def fetch_query(self, query_id: int, parameters: Optional[List[QueryParameter]] = list()) -> DuneQuery:
-        metadata = self._get_query_metadata(query_id)
-        result_id, job_id = self._get_result_id(query_id, parameters)
+        metadata = self.gqlquerier.get_query_metadata(query_id)
+        result_id, job_id = self.gqlquerier.get_result_id(query_id, parameters)
 
         # For custom param queries, override default parameters returned by metadata
         if len(parameters):
             metadata.parameters = parameters
         # TODO raise if both None
         if result_id is None:
-            result_data = self._get_result_data_by_job(job_id)
+            result_data = self.gqlquerier.get_result_data_by_job(job_id)
         else:
-            result_data = self._get_result_data_by_result(result_id)
+            result_data = self.gqlquerier.get_result_data_by_result(result_id)
         query = Query(metadata=metadata, result_data=result_data)
         return DuneQuery(query)
