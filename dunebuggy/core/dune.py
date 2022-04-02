@@ -42,16 +42,18 @@ class GraphQLQuerierMixin:
         return user_info["data"]["users"][0]["id"]
 
     def _get_query_metadata(self, query_id: int) -> QueryMetadata:
+        variables = {"id": query_id}
         raw_metadata = self._post_graph_ql(
             QueryName.FIND_QUERY,
-            {"id": query_id}
+            variables
         )
         metadata = raw_metadata['data']['queries'][0]
         return QueryMetadata(**metadata)
 
+    # TODO clean up this bulky handling of parmeters!!
     def _get_result_id(self, query_id: int, parameters: Optional[List[QueryParameter]] = None) -> str:
         variables = {"query_id": query_id}
-        if parameters is not None:
+        if len(parameters):
             parameters = [
                 param.dict() for param in parameters if type(param) == QueryParameter]
             variables['parameters'] = parameters
@@ -89,10 +91,24 @@ class GraphQLQuerierMixin:
 
     def _execute_query(self, parameters: list, query_id: int) -> None:
         # TODO maybe retry/raise on this? might not need to
+        # TODO clean up gross parameters handling
+        parameters = [
+            param.dict() for param in parameters if type(param) == QueryParameter]
         self._post_graph_ql(
             QueryName.EXECUTE_QUERY,
-            {"parameters": parameters, "query_id": query_id}
+            {"query_id": query_id, "parameters": parameters}
         )
+
+    def _process_result_data(self, raw_result: dict) -> QueryResultData:
+        results = raw_result['data']['query_results']
+        errors = [blob.get('error').get('error')
+                  for blob in results if blob.get('error')]
+        if any(errors):
+            raise DuneError('.'.join(errors))
+
+        query_result_data = results[0]
+        query_result_data['raw_data'] = raw_result['data']['get_result_by_result_id']
+        return QueryResultData(**query_result_data)
 
 
 class Dune(GraphQLQuerierMixin):
@@ -135,17 +151,6 @@ class Dune(GraphQLQuerierMixin):
         )
         self.user_id = self._get_user_id(self.sub)
 
-    def _process_result_data(self, raw_result: dict) -> QueryResultData:
-        results = raw_result['data']['query_results']
-        errors = [blob.get('error').get('error')
-                  for blob in results if blob.get('error')]
-        if any(errors):
-            raise DuneError('.'.join(errors))
-
-        query_result_data = results[0]
-        query_result_data['raw_data'] = raw_result['data']['get_result_by_result_id']
-        return QueryResultData(**query_result_data)
-
     def create_query(self, query_name: str, sql: str, dataset_id: DatasetId, parameters: Optional[List[QueryParameter]] = list(), is_temp=False) -> DuneQuery:
         # fail if not logged in
         # make this into its own empty query model class and populate it?
@@ -171,9 +176,13 @@ class Dune(GraphQLQuerierMixin):
 
         # Should return a DuneQuery Object, that can be used to grab the table, charts etc
         # Streaming Responses??
-    def fetch_query(self, query_id: int, parameters: Optional[List[QueryParameter]] = None) -> DuneQuery:
+    def fetch_query(self, query_id: int, parameters: Optional[List[QueryParameter]] = list()) -> DuneQuery:
         metadata = self._get_query_metadata(query_id)
         result_id, job_id = self._get_result_id(query_id, parameters)
+
+        # For custom param queries, override default parameters returned by metadata
+        if len(parameters):
+            metadata.parameters = parameters
         # TODO raise if both None
         if result_id is None:
             result_data = self._get_result_data_by_job(job_id)

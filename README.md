@@ -132,9 +132,9 @@ Note that the `result_id` and `job_id` here are different, this is because we ra
 print(custom_query.parameters)
 ```
 
-    [QueryParameter(key='Enter NFT Contract Address', type='text', value='xc3f733ca98e0dad0386979eb96fb1722a1a05e69', enumOptions=None),
-     QueryParameter(key='Floor Time Interval', type='enum', value='Day', enumOptions=['Day', 'Hour']),
-     QueryParameter(key='Start Date', type='datetime', value='2021-06-01 00:00:00', enumOptions=None)]
+    [QueryParameter(key='Enter NFT Contract Address', type='text', value='xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D', enumOptions=None),
+    QueryParameter(key='Floor Time Interval', type='enum', value='Day', enumOptions=['Day', 'Hour']),
+    QueryParameter(key='Start Date', type='datetime', value='2021-06-01 00:00:00', enumOptions=None)]
 
 ```python
 print(custom_query.df.head())
