@@ -88,6 +88,8 @@ class Dune:
         # Streaming Responses??
     def fetch_query(self, query_id: int, parameters: Optional[List[QueryParameter]] = list()) -> DuneQuery:
         metadata = self.gqlquerier.get_query_metadata(query_id)
+        if not parameters and metadata.parameters:
+            parameters = metadata.parameters
         result_id, job_id = self.gqlquerier.get_result_id(query_id, parameters)
 
         # For custom param queries, override default parameters returned by metadata

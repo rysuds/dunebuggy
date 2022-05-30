@@ -48,13 +48,13 @@ class GraphQLQuerier:
         variables = {"query_id": query_id}
         if len(parameters):
             parameters = [
-                param.dict() for param in parameters if type(param) == QueryParameter]
+                param.dict(exclude_none=True) for param in parameters if type(param) == QueryParameter]
             variables['parameters'] = parameters
         result_id_data = self.post_graph_ql(
             QueryName.GET_RESULT,
             variables
         )
-        result = result_id_data.get('data').get('get_result')
+        result = result_id_data.get('data').get('get_result_v2')
         return result.get('result_id'), result.get('job_id')
 
     def get_result_data_by_job(self, job_id: UUID) -> QueryResultData:
