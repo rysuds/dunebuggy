@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "dunebuggy"
-version = "1.0.3"
+version = "1.0.4"
 description = "A lightweight (unofficial) Python SDK for Dune.xyz"
 authors = ["rysuds <ryan.sudhakaran@gmail.com>"]
 license = "MIT"
