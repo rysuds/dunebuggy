@@ -1,6 +1,6 @@
 from enum import Enum
 
-BASE_URL = "https://dune.xyz"
+BASE_URL = "https://dune.com"
 LOGIN_URL = f"{BASE_URL}/auth/login"
 API_URL = f"{BASE_URL}/api"
 API_AUTH_URL = f"{API_URL}/auth"

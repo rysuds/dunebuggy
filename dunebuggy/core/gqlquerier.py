@@ -32,6 +32,15 @@ class GraphQLQuerier:
             QueryName.FIND_SESSION_USER,
             {"sub": sub}
         )
+
+        # TODO make this a more general handling pattern for all gql calls
+        #   Could make this 'errors' response its own object
+        if 'errors' in user_info:
+            for error in user_info['errors']:
+                # This is hacky and raising on teh first error only, improve this to return ALL errors from server in one DuneError (DuneMultiError?)
+                raise DuneError(
+                    f"Dune query failed with code: {error.get('code')} and message: {error.get('message')}")
+
         return user_info["data"]["users"][0]["id"]
 
     def get_query_metadata(self, query_id: int) -> QueryMetadata:
