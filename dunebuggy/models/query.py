@@ -14,7 +14,7 @@ class User(BaseModel):
 
     @property
     def handle(self) -> str:
-        return f'@{self.name}'
+        return f"@{self.name}"
 
 
 class QueryParameter(BaseModel):
@@ -84,6 +84,7 @@ class CreateQueryOnConflict(BaseModel):
         "schedule",
         "is_archived",
         "is_temp",
+        "is_private",
         "tags",
-        "parameters"
+        "parameters",
     ]
