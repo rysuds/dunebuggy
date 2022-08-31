@@ -87,7 +87,9 @@ class Dune:
         )
         on_conflict = CreateQueryOnConflict()
 
-        upsert_response = self.gqlquerier.upsert_query(object, on_conflict)
+        upsert_response = self.gqlquerier.upsert_query(
+            object, on_conflict, self.user_id
+        )
         query_id = upsert_response["data"]["insert_queries_one"]["id"]
         self.gqlquerier.execute_query(parameters, query_id)
 

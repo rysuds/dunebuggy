@@ -79,14 +79,17 @@ class GraphQLQuerier:
         return self.process_result_data(raw_result)
 
     def upsert_query(
-        self, object: CreateQueryObject, on_conflict: CreateQueryOnConflict
+        self,
+        object: CreateQueryObject,
+        on_conflict: CreateQueryOnConflict,
+        user_id: int,
     ) -> Dict:
         upsert_response = self.post_graph_ql(
             QueryName.UPSERT_QUERY,
             {
                 "object": object.dict(),
                 "on_conflict": on_conflict.dict(),
-                "session_id": randint(0, 9999),
+                "session_id": user_id,
             },
         )
         return upsert_response
