@@ -10,7 +10,7 @@
 </h1>
 
 <div align="center">
-A lightweight (unofficial) Python SDK for <a href=https://dune.xyz/home> Dune.xyz</a>
+A lightweight (unofficial) Python SDK for <a href=https://dune.com/home> Dune.com</a>
 <br>
 
 [Installation](#installation) •
@@ -30,7 +30,7 @@ pip install dunebuggy
 
 ### Retrieving a public query
 
-To retrieve a query, all we'll need is the `query_id` for the public query we're interested in. In the below example we can take a look at the popular ["Custom NFT Floor Tracker" query by @smaroo](https://dune.xyz/queries/83579) (The `query_id` below can be found in the URL).
+To retrieve a query, all we'll need is the `query_id` for the public query we're interested in. In the below example we can take a look at the popular ["Custom NFT Floor Tracker" query by @smaroo](https://dune.com/queries/83579) (The `query_id` below can be found in the URL).
 
 ```python
 from dunebuggy import Dune
@@ -200,7 +200,7 @@ print(custom_query.df.head())
 
 ### Creating a new query
 
-`dunebuggy` also allows you to create a new using an existing Dune.xyz account.To login just need to pass in your username/password into the `Dune` object.
+`dunebuggy` also allows you to create a new using an existing Dune.com account.To login just need to pass in your username/password into the `Dune` object.
 
 You can verify your login by inspecting your Dune `user_id`
 
