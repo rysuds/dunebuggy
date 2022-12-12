@@ -1,10 +1,8 @@
+from typing import Dict, List
+
 import pandas as pd
 
-from typing import List, Dict
-from dunebuggy.models.query import (
-    Query, QueryMetadata, QueryParameter, QueryResultData,
-    RawRow
-)
+from dunebuggy.models.query import Query, QueryMetadata, QueryParameter, QueryResultData
 
 
 class DuneQuery:
@@ -14,7 +12,7 @@ class DuneQuery:
         self._df = None
 
     def __repr__(self) -> str:
-        return f'<DuneQuery query_id={self.query_id} name={self.name} length={self.length} rows>'
+        return f"<DuneQuery query_id={self.query_id} name={self.name} length={self.length} rows>"
 
     @property
     def query_id(self) -> int:
@@ -34,7 +32,7 @@ class DuneQuery:
 
     @property
     def length(self) -> int:
-        return len(self.result_data.raw_data)
+        return len(self.result_data.data)
 
     @property
     def author(self) -> str:
@@ -45,8 +43,8 @@ class DuneQuery:
         return self.result_data.columns
 
     @property
-    def raw(self) -> List[RawRow]:
-        return self.result_data.raw_data
+    def raw(self) -> List[dict]:
+        return self.result_data.data
 
     @property
     def parameters(self) -> List[QueryParameter]:
@@ -66,18 +64,18 @@ class DuneQuery:
     @property
     def info(self) -> Dict:
         return {
-            'name': self.name,
-            'author': self.author,
-            'length': self.length,
-            'query_id': self.query_id,
-            'result_id': self.result_id,
-            'job_id': self.job_id,
-            'columns': self.columns
+            "name": self.name,
+            "author": self.author,
+            "length": self.length,
+            "query_id": self.query_id,
+            "result_id": self.result_id,
+            "job_id": self.job_id,
+            "columns": self.columns,
         }
 
     def _process_to_df(self, results: List) -> pd.DataFrame:
-        processed = [r.data for r in results]
-        return pd.DataFrame(processed)
+        # processed = [r.data for r in results]
+        return pd.DataFrame(results)
 
     def to_csv(self, filename: str) -> None:
         return self.df.to_csv(filename)

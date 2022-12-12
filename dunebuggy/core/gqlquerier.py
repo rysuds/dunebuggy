@@ -1,32 +1,34 @@
+from typing import Dict, List, Optional
 from uuid import UUID
-from httpx import Client
-from random import randint
-from typing import List, Optional, Dict
 
-from dunebuggy.models.query import (
-    QueryMetadata,
-    QueryResultData,
-    QueryParameter,
-    CreateQueryOnConflict,
-    CreateQueryObject,
-)
-from dunebuggy.models.constants import GRAPH_QL_URL
-from dunebuggy.models.gqlqueries import QueryName
+from httpx import Client
+
 from dunebuggy.core.exceptions import DuneError
+from dunebuggy.models.constants import APP_API_URL, GRAPH_QL_URL
+from dunebuggy.models.gqlqueries import QueryName
+from dunebuggy.models.query import (
+    CreateQueryObject,
+    CreateQueryOnConflict,
+    QueryMetadata,
+    QueryParameter,
+    QueryResultData,
+)
 
 
 class GraphQLQuerier:
     def __init__(self, client: Client):
         self.client = client
 
-    def post_graph_ql(self, query_name: QueryName, variables: dict) -> dict:
+    def post_graph_ql(
+        self, query_name: QueryName, variables: dict, url: str = GRAPH_QL_URL
+    ) -> dict:
         # Change this to pydantic data type with enum? I.e. mapping between operation name and query?
         data = {
             "operationName": query_name.value,
             "query": query_name.get_query_string(),
             "variables": variables,
         }
-        response = self.client.post(GRAPH_QL_URL, json=data)
+        response = self.client.post(url, json=data)
         response_json = response.json()
 
         # TODO make this a more general handling pattern for all gql calls
@@ -61,22 +63,12 @@ class GraphQLQuerier:
                 for param in parameters
                 if type(param) == QueryParameter
             ]
-            variables["parameters"] = parameters
+        else:
+            parameters = list()
+        variables["parameters"] = parameters
         result_id_data = self.post_graph_ql(QueryName.GET_RESULT, variables)
-        result = result_id_data.get("data").get("get_result_v2")
+        result = result_id_data.get("data").get("get_result_v3")
         return result.get("result_id"), result.get("job_id")
-
-    def get_result_data_by_job(self, job_id: UUID) -> QueryResultData:
-        raw_result = self.post_graph_ql(
-            QueryName.FIND_RESULT_DATA_BY_JOB, {"job_id": job_id}
-        )
-        return self.process_result_data(raw_result)
-
-    def get_result_data_by_result(self, result_id: int) -> QueryResultData:
-        raw_result = self.post_graph_ql(
-            QueryName.FIND_RESULT_DATA_BY_RESULT, {"result_id": result_id}
-        )
-        return self.process_result_data(raw_result)
 
     def upsert_query(
         self,
@@ -104,14 +96,25 @@ class GraphQLQuerier:
             QueryName.EXECUTE_QUERY, {"query_id": query_id, "parameters": parameters}
         )
 
-    def process_result_data(self, raw_result: dict) -> QueryResultData:
-        results = raw_result["data"]["query_results"]
-        errors = [
-            blob.get("error").get("error") for blob in results if blob.get("error")
-        ]
-        if any(errors):
-            raise DuneError(".".join(errors))
+    def get_execution(
+        self, execution_id: str, parameters: list, query_id: int
+    ) -> QueryResultData:
+        variables = {
+            "execution_id": execution_id,
+            "parameters": parameters,
+            "query_id": query_id,
+        }
+        raw_result = self.post_graph_ql(
+            QueryName.GET_EXECUTION, variables=variables, url=APP_API_URL
+        )
+        return self.process_result_data(raw_result)
 
-        query_result_data = results[0]
-        query_result_data["raw_data"] = raw_result["data"]["get_result_by_result_id"]
-        return QueryResultData(**query_result_data)
+    def process_result_data(self, raw_result: dict) -> QueryResultData:
+        # TODO error raise on other execution failures
+        # execution_failed, execution_queued, execution_running, execution_succeeded
+        execution_status = raw_result["data"]["get_execution"]
+        succeeded_data = execution_status.get("execution_succeeded")
+        if succeeded_data is None:
+            raise Error("Execution failed!")
+
+        return QueryResultData(**succeeded_data)

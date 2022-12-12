@@ -1,10 +1,11 @@
-from uuid import UUID
-from enum import Enum
 from datetime import datetime
-from typing import Optional, List, Dict
-from pydantic import BaseModel, AnyHttpUrl
+from enum import Enum
+from typing import Dict, List, Optional
+from uuid import UUID
 
-from dunebuggy.models.constants import DatasetId, ParameterEnum, DatasetId
+from pydantic import AnyHttpUrl, BaseModel
+
+from dunebuggy.models.constants import DatasetId, ParameterEnum
 
 
 class User(BaseModel):
@@ -39,18 +40,12 @@ class QueryMetadata(BaseModel):
     updated_at: datetime
 
 
-class RawRow(BaseModel):
-    data: Dict
-    __typename: str
-
-
 class QueryResultData(BaseModel):
-    id: UUID
-    job_id: UUID
-    runtime: int  # seconds
+    execution_id: str
+    runtime_seconds: int  # seconds
     generated_at: datetime
     columns: List[str]
-    raw_data: List[RawRow]
+    data: List[dict]
 
 
 class Query(BaseModel):

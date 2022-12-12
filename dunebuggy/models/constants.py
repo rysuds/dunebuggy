@@ -7,6 +7,7 @@ API_AUTH_URL = f"{API_URL}/auth"
 SESSION_URL = f"{API_AUTH_URL}/session"
 CSRF_URL = f"{API_AUTH_URL}/csrf"
 GRAPH_QL_URL = "https://core-hsr.dune.com/v1/graphql"
+APP_API_URL = "https://app-api.dune.com/v1/graphql"
 
 DEFAULT_HEADERS = {
     "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,"

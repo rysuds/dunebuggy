@@ -1,23 +1,25 @@
-from httpx import Client
 from typing import List, Optional
-from dunebuggy.models.constants import (
-    DEFAULT_HEADERS,
-    LOGIN_URL,
-    CSRF_URL,
-    BASE_URL,
-    API_AUTH_URL,
-    SESSION_URL,
-)
-from dunebuggy.models.query import (
-    Query,
-    QueryParameter,
-    CreateQueryOnConflict,
-    CreateQueryObject,
-)
-from dunebuggy.core.gqlquerier import GraphQLQuerier
-from dunebuggy.models.constants import DatasetId
+
+from httpx import Client
+
 from dunebuggy.core.dunequery import DuneQuery
 from dunebuggy.core.exceptions import DuneError
+from dunebuggy.core.gqlquerier import GraphQLQuerier
+from dunebuggy.models.constants import (
+    API_AUTH_URL,
+    BASE_URL,
+    CSRF_URL,
+    DEFAULT_HEADERS,
+    LOGIN_URL,
+    SESSION_URL,
+    DatasetId,
+)
+from dunebuggy.models.query import (
+    CreateQueryObject,
+    CreateQueryOnConflict,
+    Query,
+    QueryParameter,
+)
 
 
 class Dune:
@@ -102,17 +104,24 @@ class Dune:
         self, query_id: int, parameters: Optional[List[QueryParameter]] = list()
     ) -> DuneQuery:
         metadata = self.gqlquerier.get_query_metadata(query_id, self.user_id)
-        if not parameters and metadata.parameters:
+        if not parameters and len(metadata.parameters):
             parameters = metadata.parameters
+        else:
+            parameters = list()
         result_id, job_id = self.gqlquerier.get_result_id(query_id, parameters)
 
         # For custom param queries, override default parameters returned by metadata
         if len(parameters):
             metadata.parameters = parameters
-        # TODO raise if both None
-        if result_id is None:
-            result_data = self.gqlquerier.get_result_data_by_job(job_id)
-        else:
-            result_data = self.gqlquerier.get_result_data_by_result(result_id)
+
+        # # TODO raise if both None
+        # if result_id is None:
+        #     result_data = self.gqlquerier.get_result_data_by_job(job_id)
+        # else:
+        #     result_data = self.gqlquerier.get_result_data_by_result(result_id)
+
+        result_data = self.gqlquerier.get_execution(
+            execution_id=result_id, parameters=parameters, query_id=query_id
+        )
         query = Query(metadata=metadata, result_data=result_data)
         return DuneQuery(query)
